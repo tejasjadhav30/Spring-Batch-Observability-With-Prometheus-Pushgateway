@@ -4,7 +4,7 @@ This project demonstrates how to monitor **Spring Batch jobs** using **Micromete
 
 ---
 
-## 🚀 Tech Stack
+##  Tech Stack
 
 * **Spring Boot**
 * **Spring Batch**
@@ -15,7 +15,7 @@ This project demonstrates how to monitor **Spring Batch jobs** using **Micromete
 
 ---
 
-## 🔧 Configuration
+##  Configuration
 
 ### 1. `application.yml`
 
@@ -35,9 +35,9 @@ management:
 
 ---
 
-## 💠 Implementation Overview
+##  Implementation Overview
 
-### ✅ PushGateway Bean
+###  PushGateway Bean
 
 Registers a `PushGateway` bean based on config properties and links it with the Prometheus registry.
 
@@ -74,7 +74,7 @@ PushGateway pushGateway(
 
 ```
 
-### ✅ Push Metrics on Fixed Interval
+### Push Metrics on Fixed Interval
 
 Uses a simple async scheduler to push metrics periodically.
 
@@ -92,7 +92,7 @@ SimpleAsyncTaskScheduler taskSchedulerPushGateway(...) {
 }
 ```
 
-### ✅ Push Metrics on Shutdown
+###  Push Metrics on Shutdown
 
 Ensures that the final state of metrics is pushed on app shutdown.
 
@@ -111,9 +111,9 @@ ApplicationListener<ContextClosedEvent> shutdownOperationForBatch(...) {
 
 ---
 
-## 📈 Prometheus Configuration
+##  Prometheus Configuration
 
-### 📦 Run Prometheus & PushGateway using Docker
+###  Run Prometheus & PushGateway using Docker
 
 Use the following Docker commands to set up Prometheus and PushGateway:
 
@@ -134,7 +134,7 @@ docker run -d \
 
 > Make sure to replace `/path/to/prometheus.yml` with the actual path to your configuration file.
 
-### 🛠 Sample `prometheus.yml`
+###  Sample `prometheus.yml`
 
 ```yaml
 scrape_configs:
@@ -148,7 +148,7 @@ Prometheus will **pull metrics from PushGateway**, which receives **pushed metri
 
 ---
 
-## 📌 Notes
+##  Notes
 
 * `spring.batch.job.name` is injected to label the job in Prometheus.
 * Metrics are pushed every `5s` (configurable).
@@ -156,12 +156,22 @@ Prometheus will **pull metrics from PushGateway**, which receives **pushed metri
 
 ---
 
-## 📷 Grafana (Optional)
+##  Grafana (Optional)
 
 * Import the Prometheus data source.
 
 
 ---
+## Disadvantages of Using PushGateway
+While Prometheus PushGateway is useful for exposing metrics from short-lived batch jobs, it comes with some limitations:
+
+No Retention or Expiry of Metrics
+PushGateway does not automatically delete old or stale metrics. Once a metric is pushed, it stays in memory indefinitely until:
+
+Manually deleted by calling the /metrics/job/<job_name>/... DELETE endpoint.
+
+The PushGateway server is restarted.
+
 
 ## 👨‍💼 Author
 
